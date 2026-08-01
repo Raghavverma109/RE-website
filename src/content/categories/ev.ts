@@ -11,20 +11,20 @@ export const ev: Category = {
     "A full line of electric two-, three- and cargo vehicles, designed and manufactured in-house.",
   order: 10,
   items: [
-    {
-      slug: "rafander-motiva",
-      name: "RAFANDER Motiva",
-      tag: "Electric Scooter",
-      specs: ["Range 90 km", "Top speed 65 km/h", "Removable Li-ion", "Zero emissions"],
-      media: [
-        {
-          key: "products/ev/rafander-motiva.webp",
-          alt: "RAFANDER Motiva electric scooter, side profile",
-          width: 1393,
-          height: 1129,
-        },
-      ],
-    },
+    // {
+    //   slug: "rafander-motiva",
+    //   name: "RAFANDER Motiva",
+    //   tag: "Electric Scooter",
+    //   specs: ["Range 90 km", "Top speed 65 km/h", "Removable Li-ion", "Zero emissions"],
+    //   media: [
+    //     {
+    //       key: "products/ev/rafander-motiva.webp",
+    //       alt: "RAFANDER Motiva electric scooter, side profile",
+    //       width: 1393,
+    //       height: 1129,
+    //     },
+    //   ],
+    // },
     {
       slug: "rafander",
       name: "RAFANDER",
@@ -46,6 +46,18 @@ export const ev: Category = {
         {
           key: "products/ev/rafander2.webp",
           alt: "RAFANDER electric bike, detail view",
+          width: 1402,
+          height: 1122,
+        },
+        {
+          key: "products/ev/rafander-motiva.webp",
+          alt: "RAFANDER Motiva electric scooter, side profile",
+          width: 1393,
+          height: 1129,
+        },
+        {
+          key: "products/ev/e-lion.webp",
+          alt: "RANAYARA E-Lion performance electric vehicle",
           width: 1402,
           height: 1122,
         },
@@ -83,20 +95,20 @@ export const ev: Category = {
         },
       ],
     },
-    {
-      slug: "e-lion",
-      name: "RANAYARA E-Lion",
-      tag: "Performance EV",
-      specs: ["Peak 8 kW motor", "Sport chassis", "Regenerative brakes", "Alloy wheels"],
-      media: [
-        {
-          key: "products/ev/e-lion.webp",
-          alt: "RANAYARA E-Lion performance electric vehicle",
-          width: 1402,
-          height: 1122,
-        },
-      ],
-    },
+    // {
+    //   slug: "e-lion",
+    //   name: "RANAYARA E-Lion",
+    //   tag: "Performance EV",
+    //   specs: ["Peak 8 kW motor", "Sport chassis", "Regenerative brakes", "Alloy wheels"],
+    //   media: [
+    //     {
+    //       key: "products/ev/e-lion.webp",
+    //       alt: "RANAYARA E-Lion performance electric vehicle",
+    //       width: 1402,
+    //       height: 1122,
+    //     },
+    //   ],
+    // },
     {
       slug: "bestiva",
       name: "RANAYARA BESTIVA",

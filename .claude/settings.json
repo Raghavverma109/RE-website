@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd d:/RANAYAR-ENGINEERING/ranayar-forward-motion-main; grep -rn \"resolvePreset\" node_modules/nitro/dist/_presets.mjs | head -5; echo \"=== fn body ===\"; sed -n '/function resolvePreset/,/^}/p' node_modules/nitro/dist/_presets.mjs | head -60)"
+    ],
+    "additionalDirectories": [
+      "D:\\RANAYAR-ENGINEERING\\ranayar-forward-motion-main\\node_modules\\nitro\\dist"
+    ]
+  }
+}
