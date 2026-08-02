@@ -1,30 +1,42 @@
 import { useMemo } from "react";
-import { allMedia } from "@/content";
+import type { ImageRef } from "@/content/types";
 import { image } from "@/lib/media";
 import Masonry, { type MasonryItem } from "./masonry";
 
 const BASE_WIDTH = 400;
 
 type GalleryMasonryProps = {
-  /** Called with the resolved image URL on click, e.g. to open a lightbox. */
-  onImageClick?: (src: string) => void;
+  /** The photos to lay out, in display order. */
+  media: ImageRef[];
+  /** Receives the index into `media` of the clicked photo, e.g. to open a lightbox. */
+  onSelect?: (index: number) => void;
 };
 
-/** Every image used across the site's product categories, laid out as a masonry grid. */
-export function GalleryMasonry({ onImageClick }: GalleryMasonryProps) {
+/**
+ * A set of images laid out as an animated masonry grid.
+ *
+ * The caller owns the list so it can filter it, and gets back an index rather
+ * than a URL — a lightbox needs to know *where* in the set it is to offer
+ * prev/next, which a bare src can't tell it.
+ */
+export function GalleryMasonry({ media, onSelect }: GalleryMasonryProps) {
   const items = useMemo<MasonryItem[]>(
     () =>
-      allMedia().map((media) => {
-        const src = image(media.key);
+      media.map((m, i) => {
+        const src = image(m.key);
         return {
-          id: media.key,
+          // Index-suffixed: the same photo may legitimately appear under two
+          // products, and Masonry addresses tiles by a unique data-key.
+          id: `${m.key}-${i}`,
           img: src,
           url: src,
-          height: BASE_WIDTH * (media.height / media.width),
+          height: BASE_WIDTH * (m.height / m.width),
         };
       }),
-    [],
+    [media],
   );
+
+  const indexById = useMemo(() => new Map(items.map((it, i) => [it.id, i])), [items]);
 
   return (
     <Masonry
@@ -37,7 +49,7 @@ export function GalleryMasonry({ onImageClick }: GalleryMasonryProps) {
       hoverScale={0.95}
       blurToFocus
       colorShiftOnHover={false}
-      onItemClick={onImageClick ? (item) => onImageClick(item.img) : undefined}
+      onItemClick={onSelect ? (item) => onSelect(indexById.get(item.id) ?? 0) : undefined}
     />
   );
 }

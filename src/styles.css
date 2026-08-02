@@ -164,3 +164,47 @@
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
 }
+
+/*
+ * Gallery marquee — an endlessly sliding row of photos.
+ *
+ * The track holds the same list twice and travels exactly -50%, so the second
+ * copy lands where the first started and the seam is invisible. That only works
+ * if every tile carries its own trailing margin: a flex `gap` would add one
+ * extra gap in the middle that -50% doesn't account for, and the row would
+ * visibly jump each cycle.
+ *
+ * It's CSS-only on purpose. This runs on the homepage, where a scroll-driven
+ * JS animation would compete with Lenis and ScrollTrigger for the same frames.
+ */
+@keyframes gallery-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+.gallery-marquee {
+  overflow: hidden;
+}
+
+.gallery-marquee__track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: gallery-marquee var(--marquee-duration, 60s) linear infinite;
+  animation-direction: var(--marquee-direction, normal);
+}
+
+.gallery-marquee:hover .gallery-marquee__track,
+.gallery-marquee:focus-within .gallery-marquee__track {
+  animation-play-state: paused;
+}
+
+/* No motion: stop the travel and hand the row back to the user as a scroller. */
+@media (prefers-reduced-motion: reduce) {
+  .gallery-marquee {
+    overflow-x: auto;
+  }
+  .gallery-marquee__track {
+    animation: none;
+  }
+}

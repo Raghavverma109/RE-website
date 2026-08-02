@@ -30,6 +30,30 @@ export function allMedia(): ImageRef[] {
   return categories.flatMap((c) => c.items).flatMap((i) => i.media);
 }
 
+/**
+ * One image per product — a cross-section of the whole catalogue.
+ *
+ * Used where showing every photo would be noise: the homepage gallery teaser
+ * and the gallery page's featured slider both want breadth, not depth.
+ */
+export function featuredMedia(limit = Infinity): ImageRef[] {
+  return categories
+    .flatMap((c) => c.items)
+    .flatMap((i) => (i.media[0] ? [i.media[0]] : []))
+    .slice(0, limit);
+}
+
+/** Every image grouped by the category it came from — powers the gallery filters. */
+export function mediaByCategory(): { slug: string; name: string; media: ImageRef[] }[] {
+  return categories
+    .map((c) => ({
+      slug: c.slug,
+      name: c.name,
+      media: c.items.flatMap((i) => i.media),
+    }))
+    .filter((g) => g.media.length > 0);
+}
+
 /** A product together with the category it belongs to, or undefined if either slug is wrong. */
 export function getProduct(
   categorySlug: string,

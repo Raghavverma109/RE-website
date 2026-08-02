@@ -3,13 +3,14 @@ import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { image } from "@/lib/media";
 
-const navLinks: { id: string; label: string; to?: "/catalog" | "/about" }[] = [
+const navLinks: { id: string; label: string; to?: "/catalog" | "/about" | "/gallery" }[] = [
   { id: "about", label: "About", to: "/about" },
   { id: "ev", label: "EV" },
   { id: "robotics", label: "Robotics" },
   { id: "ems", label: "Electronics" },
   { id: "catalog", label: "Catalog", to: "/catalog" },
-  { id: "gallery", label: "Gallery" },
+  // Its own page now, not the homepage anchor — the homepage only teases it.
+  { id: "gallery", label: "Gallery", to: "/gallery" },
   { id: "contact", label: "Contact" },
 ];
 

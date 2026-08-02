@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import {
   Zap,
   Cpu,
   CircuitBoard,
   ArrowRight,
-  X,
   Play,
   ShieldCheck,
   Wrench,
@@ -16,13 +16,15 @@ import {
   Phone,
   MapPin,
 } from "lucide-react";
-import { getCategory } from "@/content";
+import { allMedia, featuredMedia, getCategory } from "@/content";
 import { Img } from "@/components/media/img";
-import { GalleryMasonry } from "@/components/media/gallery-masonry";
+import { GalleryStrip } from "@/components/media/gallery-strip";
+import { Lightbox } from "@/components/media/lightbox";
 import { HeroVideo } from "@/components/media/hero-video";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { StatCounter } from "@/components/stat-counter";
+import { image } from "@/lib/media";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 
 const capabilities = [
@@ -73,13 +75,22 @@ export default function RanayarSite() {
   const evSectionRef = useRef<HTMLElement | null>(null);
   const evTrackRef = useRef<HTMLDivElement | null>(null);
   const [testimonialIdx, setTestimonialIdx] = useState(0);
-  const [lightbox, setLightbox] = useState<string | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const evCategory = getCategory("ev");
   const emsCategory = getCategory("ems");
   const roboticsCategory = getCategory("robotics");
   const evItems = evCategory?.items ?? [];
   const emsItems = emsCategory?.items ?? [];
+
+  // A dozen photos is the teaser; the rest live on /gallery. Keep this even so
+  // the two marquee rows come out the same length.
+  const galleryTeaser = useMemo(() => featuredMedia(12), []);
+  const galleryCount = useMemo(() => allMedia().length, []);
+  const teaserLightboxItems = useMemo(
+    () => galleryTeaser.map((m) => ({ src: image(m.key), alt: m.alt })),
+    [galleryTeaser],
+  );
 
   useSmoothScroll();
 
@@ -416,39 +427,50 @@ export default function RanayarSite() {
         </div>
       </section>
 
-      {/* GALLERY */}
-      <section id="gallery" className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 md:py-32">
-        <div className="reveal mb-10">
-          <div className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-brand-accent">
-            Media Gallery
+      {/* GALLERY TEASER — the full set lives on /gallery */}
+      <section id="gallery" className="overflow-hidden py-24 md:py-32">
+        <div className="mx-auto mb-12 max-w-[1320px] px-5 sm:px-8">
+          <div className="reveal flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <div className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-brand-accent">
+                Media Gallery
+              </div>
+              <h2 className="font-display text-4xl font-bold leading-tight text-ink sm:text-5xl">
+                Inside our floor.
+              </h2>
+              <p className="mt-5 max-w-xl text-lg text-charcoal">
+                {galleryCount} photographs of the vehicles, robotic cells and boards we build — shot
+                on our own shop floor.
+              </p>
+            </div>
+            <Link
+              to="/gallery"
+              className="group inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-accent"
+            >
+              View full gallery
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
           </div>
-          <h2 className="font-display text-4xl font-bold leading-tight text-ink sm:text-5xl">
-            Inside our floor.
-          </h2>
         </div>
         <div className="reveal">
-          <GalleryMasonry onImageClick={setLightbox} />
+          <GalleryStrip media={galleryTeaser} onSelect={(i) => setLightboxIndex(i)} />
+        </div>
+        <div className="mx-auto mt-12 max-w-[1320px] px-5 text-center sm:px-8">
+          <Link
+            to="/gallery"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-brand transition-colors hover:text-brand-accent"
+          >
+            See all {galleryCount} photographs <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 
-      {lightbox && (
-        <div
-          className="fixed inset-0 z-[100] grid place-items-center bg-ink/95 p-6 backdrop-blur"
-          onClick={() => setLightbox(null)}
-        >
-          <button
-            className="absolute right-6 top-6 grid h-11 w-11 place-items-center rounded-full bg-white/10 text-white"
-            aria-label="Close"
-          >
-            <X className="h-6 w-6" />
-          </button>
-          <img
-            src={lightbox}
-            alt="Gallery item"
-            className="max-h-[90vh] max-w-full rounded-xl object-contain"
-          />
-        </div>
-      )}
+      <Lightbox
+        items={teaserLightboxItems}
+        index={lightboxIndex}
+        onClose={() => setLightboxIndex(null)}
+        onNavigate={setLightboxIndex}
+      />
 
       {/* CAPABILITIES */}
       <section className="bg-ink py-24 text-white md:py-32">
