@@ -67,7 +67,5 @@ export function listImages(prefix = ""): string[] {
  * see this file's header comment before changing one.
  */
 export const VIDEO = {
-  // heroWebm: "/assets/video/hero-v1.webm",
   heroMp4: "/assets/video/hero-v1.mp4",
-  // heroPoster: "/assets/video/hero-v1-poster.webp",
 } as const;

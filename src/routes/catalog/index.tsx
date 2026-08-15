@@ -12,13 +12,12 @@ export const Route = createFileRoute("/catalog/")({
       { title: "Catalog — RANAYARA Engineering" },
       {
         name: "description",
-        content:
-          "Browse RANAYARA's full product catalog: electric vehicles, robotics & automation systems, and electronics manufacturing services.",
+        content: "Browse RANAYARA's full EV catalog: electric bikes, cargo and passenger vehicles.",
       },
       { property: "og:title", content: "Catalog — RANAYARA Engineering" },
       {
         property: "og:description",
-        content: "Electric vehicles, robotics and electronics — the full RANAYARA lineup.",
+        content: "The full RANAYARA electric vehicle lineup.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

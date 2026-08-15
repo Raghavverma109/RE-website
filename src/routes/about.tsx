@@ -21,7 +21,7 @@ import { Timeline } from "@/components/about/timeline";
 import { hasImage, image } from "@/lib/media";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 
-const HERO_IMAGE_KEY = "site/about-hero.webp";
+const HERO_IMAGE_KEY = "products/ev/bestiva.webp";
 const LOCATION_MAP_KEY = "site/location.webp";
 
 /**
@@ -113,18 +113,18 @@ const journey = [
   { year: "2023", title: "Expansion", desc: "Opened new facilities in Noida, Pune, and Pitampur." },
   {
     year: "2024",
-    title: "Diversification",
-    desc: "Launched EV Motors and Infrastructure divisions.",
+    title: "Electrification",
+    desc: "Launched the Ranayara Electric Vehicle Motor division and began in-house battery pack development.",
   },
   {
     year: "2025",
-    title: "Innovation",
-    desc: "Introduced Alkaline Mineral Water and expanded automation solutions.",
+    title: "Lineup",
+    desc: "Introduced the BESTIVA passenger E-Auto and expanded the charging and service network.",
   },
   {
     year: "2026",
     title: "Growth",
-    desc: "Continued expansion with multiple group companies operational.",
+    desc: "Scaling EV production across facilities, with fleet partners live nationwide.",
   },
 ];
 
@@ -133,17 +133,16 @@ const certifications = ["ISO 9001:2015", "ISO 14001:2015", "IATF 16949", "OHSAS 
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Ranayara Group — Industrial Manufacturing Company" },
+      { title: "About Ranayara Group — Electric Vehicle Manufacturer" },
       {
         name: "description",
         content:
-          "India's leading precision engineering group with 5+ years of manufacturing excellence — tool and die manufacturing, industrial automation, and electric vehicles.",
+          "India's electric mobility manufacturer, engineering and building electric two-, three- and cargo vehicles in-house — from battery pack to charge port.",
       },
       { property: "og:title", content: "About Ranayara Group" },
       {
         property: "og:description",
-        content:
-          "India's leading precision engineering group — your trusted industrial manufacturing partner.",
+        content: "India's electric mobility manufacturer — your trusted EV fleet partner.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -168,8 +167,8 @@ function AboutPage() {
           <img
             src={image(HERO_IMAGE_KEY)}
             alt=""
-            width={1920}
-            height={1080}
+            width={1535}
+            height={1024}
             fetchPriority="high"
             className="absolute inset-0 h-full w-full object-cover opacity-65"
           />
@@ -180,12 +179,12 @@ function AboutPage() {
         <div className="relative z-10 mx-auto w-full max-w-[1320px] px-5 py-32 sm:px-8">
           <div className="max-w-3xl">
             <h1 className="font-display text-4xl font-bold leading-[1.1] sm:text-5xl md:text-6xl">
-              About Ranayara Group – Industrial Manufacturing Company
+              About Ranayara Group – Electric Vehicle Manufacturer
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-white/70">
-              India's leading precision engineering group with 5+ years of manufacturing excellence.
-              From tool and die manufacturing to industrial automation solutions and electric
-              vehicles — we are your trusted industrial manufacturing partner.
+              India's electric mobility manufacturer, with 5+ years engineering electric two-,
+              three- and cargo vehicles from the ground up — battery, motor and body, all
+              designed and built in-house.
             </p>
           </div>
           <div className="mt-16 grid grid-cols-2 gap-8 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm sm:p-8 md:grid-cols-4">
@@ -233,8 +232,8 @@ function AboutPage() {
               Our Vision
             </div>
             <p className="text-lg leading-relaxed text-charcoal">
-              To be the preferred industrial partner for global manufacturing excellence, driving
-              innovation and sustainability across every sector we serve.
+              To be India's preferred electric mobility partner, driving the shift to clean,
+              affordable transport for personal, fleet and cargo use.
             </p>
           </div>
           <div className="reveal rounded-3xl border border-black/5 bg-white p-8 shadow-sm sm:p-10">
@@ -242,9 +241,8 @@ function AboutPage() {
               Our Mission
             </div>
             <p className="text-lg leading-relaxed text-charcoal">
-              To deliver precision-engineered solutions, sustainable mobility, quality construction,
-              and clean air technologies that create lasting value for our customers and
-              communities.
+              To engineer and build electric vehicles that earn their place on Indian roads —
+              reliable range, low cost of ownership, and service that keeps fleets moving.
             </p>
           </div>
         </div>

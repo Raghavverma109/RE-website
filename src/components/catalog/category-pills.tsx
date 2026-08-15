@@ -2,9 +2,9 @@ import { Link } from "@tanstack/react-router";
 import { categories } from "@/content";
 
 /**
- * "All | EV | Robotics | Electronics" filter nav. Each pill is a real link to
- * its own URL (/catalog or /catalog/$category) — there is no separate client
- * filter state to keep in sync with what's shown.
+ * "All | <category>" filter nav. Each pill is a real link to its own URL
+ * (/catalog or /catalog/$category) — there is no separate client filter state
+ * to keep in sync with what's shown.
  */
 export function CategoryPills({ activeCategorySlug }: { activeCategorySlug?: string }) {
   const pillClass = (active: boolean) =>

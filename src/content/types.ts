@@ -15,10 +15,9 @@ export type ImageRef = {
 };
 
 /**
- * One sellable thing. Deliberately loose: EV entries carry specs and a photo,
- * EMS service entries carry a description and (today) no photo at all. One type
- * with optional fields means EMS gains images later by dropping files in a
- * folder rather than by reshaping the data.
+ * One sellable thing. Fields are optional so a product can carry specs and a
+ * gallery (today's EV lineup) or just a short description, without reshaping
+ * the type later.
  */
 export type Product = {
   /** URL-safe, unique within its category. */

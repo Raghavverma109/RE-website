@@ -56,8 +56,6 @@ describe("listImages()", () => {
 describe("VIDEO", () => {
   it("points at public/ paths, not bundled modules", () => {
     expect(VIDEO.heroMp4).toBe("/assets/video/hero-v1.mp4");
-    expect(VIDEO.heroWebm).toBe("/assets/video/hero-v1.webm");
-    expect(VIDEO.heroPoster).toBe("/assets/video/hero-v1-poster.webp");
   });
 
   it("carries a version in every public/ filename", () => {

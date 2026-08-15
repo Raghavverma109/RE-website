@@ -70,23 +70,23 @@
 :root {
   --radius: 0.625rem;
   --background: #ffffff;
-  --foreground: #1a1a1a;
-  --brand: #1e4e93;
-  --brand-accent: #2f80ed;
-  --ink: #1a1a1a;
-  --charcoal: #494949;
+  --foreground: #10181a;
+  --brand: #0e7490;
+  --brand-accent: #22d3ee;
+  --ink: #0a1416;
+  --charcoal: #47585c;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: #1e4e93;
+  --primary: #0e7490;
   --primary-foreground: #ffffff;
-  --secondary: #f4f6fa;
+  --secondary: #f2f8f9;
   --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: #f4f6fa;
-  --muted-foreground: #494949;
-  --accent: #2f80ed;
-  --accent-foreground: #ffffff;
+  --muted: #f2f8f9;
+  --muted-foreground: #47585c;
+  --accent: #22d3ee;
+  --accent-foreground: #06272c;
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
   --border: oklch(0.929 0.013 255.508);
@@ -206,5 +206,64 @@
   }
   .gallery-marquee__track {
     animation: none;
+  }
+}
+
+/*
+ * EV charge badge — a tiny battery pictogram whose fill level loops from
+ * empty to full, used next to the hero eyebrow instead of a static dot.
+ */
+@keyframes ev-charge-fill {
+  0% { width: 8%; }
+  55% { width: 100%; }
+  85% { width: 100%; }
+  100% { width: 8%; }
+}
+
+.ev-charge__fill {
+  animation: ev-charge-fill 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ev-charge__fill {
+    animation: none;
+    width: 70%;
+  }
+}
+
+/*
+ * Speed-line hover sweep — a diagonal band of light that crosses a card on
+ * hover, standing in for motion/velocity on product tiles and EV panels.
+ * Sits behind the card's own content via z-index in the markup, not here.
+ */
+.speed-lines {
+  position: relative;
+  overflow: hidden;
+}
+
+.speed-lines::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(34, 211, 238, 0.28) 48%,
+    rgba(34, 211, 238, 0.05) 58%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+
+.speed-lines:hover::after,
+.speed-lines:focus-within::after {
+  transform: translateX(120%);
+  transition: transform 0.85s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .speed-lines::after {
+    display: none;
   }
 }

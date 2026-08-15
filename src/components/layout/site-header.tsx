@@ -5,9 +5,8 @@ import { image } from "@/lib/media";
 
 const navLinks: { id: string; label: string; to?: "/catalog" | "/about" | "/gallery" }[] = [
   { id: "about", label: "About", to: "/about" },
-  { id: "ev", label: "EV" },
-  { id: "robotics", label: "Robotics" },
-  { id: "ems", label: "Electronics" },
+  { id: "ev", label: "Models" },
+  { id: "charging", label: "Charging" },
   { id: "catalog", label: "Catalog", to: "/catalog" },
   // Its own page now, not the homepage anchor — the homepage only teases it.
   { id: "gallery", label: "Gallery", to: "/gallery" },
@@ -20,18 +19,18 @@ function LogoMark({ logoSrc, scrolled }: { logoSrc: string; scrolled: boolean })
       <img
         src={logoSrc}
         alt="RANAYARA Engineering"
-        width={40}
-        height={40}
-        className="h-10 w-10 object-contain"
+        width={56}
+        height={56}
+        className="h-14 w-14 object-contain"
       />
       <div className="min-w-0">
         <div
-          className={`font-display text-base font-bold leading-none ${scrolled ? "text-ink" : "text-white"}`}
+          className={`font-display text-xl font-bold leading-none ${scrolled ? "text-ink" : "text-white"}`}
         >
           RANAYARA
         </div>
         <div
-          className={`text-[10px] font-medium uppercase tracking-[0.2em] ${scrolled ? "text-charcoal" : "text-white/70"}`}
+          className={`text-xs font-medium uppercase tracking-[0.2em] ${scrolled ? "text-charcoal" : "text-white/70"}`}
         >
           Engineering
         </div>

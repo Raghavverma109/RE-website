@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { Autoplay, EffectCoverflow, Keyboard } from "swiper/modules";
+import { Autoplay, EffectFade, Keyboard } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperClass } from "swiper/types";
 import "swiper/css";
-import "swiper/css/effect-coverflow";
+import "swiper/css/effect-fade";
 
 import { allMedia, featuredMedia, mediaByCategory } from "@/content";
 import type { ImageRef } from "@/content/types";
@@ -22,18 +22,17 @@ export const Route = createFileRoute("/gallery")({
       { title: "Gallery — RANAYARA Engineering" },
       {
         name: "description",
-        content:
-          "Inside the RANAYARA floor: electric vehicles, robotic automation cells and electronics manufacturing, in photographs.",
+        content: "Inside the RANAYARA floor: our electric vehicle lineup, in photographs.",
       },
       { property: "og:title", content: "Gallery — RANAYARA Engineering" },
       {
         property: "og:description",
-        content: "Photographs from the RANAYARA design, automation and electronics floor.",
+        content: "Photographs from the RANAYARA electric vehicle design and manufacturing floor.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://ranayar.com/gallery" }],
+    links: [{ rel: "canonical", href: "https://ranayara.com/gallery" }],
   }),
   component: GalleryPage,
 });
@@ -45,7 +44,6 @@ function GalleryPage() {
   useSmoothScroll();
 
   const groups = useMemo(mediaByCategory, []);
-  const featured = useMemo(() => featuredMedia(), []);
   const everything = useMemo(allMedia, []);
 
   const [filter, setFilter] = useState("all");
@@ -67,7 +65,7 @@ function GalleryPage() {
       <GalleryHero count={everything.length} />
 
       {/* FEATURED SLIDER */}
-      <section className="overflow-hidden bg-ink pb-24 pt-4 text-white md:pb-32">
+      <section className="overflow-hidden bg-ink pt-16 text-white">
         <div className="mx-auto mb-10 flex max-w-[1320px] flex-wrap items-end justify-between gap-4 px-5 sm:px-8">
           <div>
             <div className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-brand-accent">
@@ -81,7 +79,7 @@ function GalleryPage() {
             Drag, swipe or use the arrow keys. Tap any frame to open it full size.
           </p>
         </div>
-        <FeaturedSlider media={featured} onSelect={(i) => openViewer(featured, i)} />
+        <FeaturedSlider media={everything} onSelect={(i) => openViewer(everything, i)} />
       </section>
 
       {/* FULL GRID */}
@@ -269,8 +267,8 @@ function GalleryHero({ count }: { count: number }) {
           Inside our floor.
         </h1>
         <p className="mt-6 max-w-xl text-lg text-white/70">
-          {count} photographs from the RANAYARA design, automation and electronics floor — every
-          vehicle, cell and board we build, as it actually looks.
+          {count} photographs from the RANAYARA design and manufacturing floor — every vehicle we
+          build, as it actually looks.
         </p>
       </div>
     </section>
@@ -295,48 +293,35 @@ function FeaturedSlider({
   return (
     <div className="relative">
       <Swiper
-        modules={[Autoplay, EffectCoverflow, Keyboard]}
+        modules={[Autoplay, EffectFade, Keyboard]}
         onSwiper={(s) => (swiperRef.current = s)}
-        effect="coverflow"
-        coverflowEffect={{ rotate: 0, stretch: 0, depth: 240, modifier: 2, slideShadows: false }}
-        centeredSlides
-        grabCursor
+        effect="fade"
+        fadeEffect={{ crossFade: true }}
         loop
-        slidesPerView={1.15}
-        spaceBetween={16}
-        breakpoints={{
-          640: { slidesPerView: 1.7, spaceBetween: 24 },
-          1024: { slidesPerView: 2.4, spaceBetween: 32 },
-        }}
         keyboard={{ enabled: true }}
-        autoplay={{ delay: 3400, disableOnInteraction: false, pauseOnMouseEnter: true }}
-        className="!px-5 sm:!px-8"
+        autoplay={{ delay: 6000, disableOnInteraction: false, pauseOnMouseEnter: true }}
       >
         {media.map((m, i) => (
-          <SwiperSlide key={m.key} className="!h-auto">
-            <button
-              type="button"
-              onClick={() => onSelect(i)}
-              className="group relative block w-full overflow-hidden rounded-3xl bg-white/5"
-            >
+          <SwiperSlide key={m.key}>
+            <button type="button" onClick={() => onSelect(i)} className="group relative block h-screen w-full">
               <img
                 src={image(m.key)}
                 alt={m.alt}
                 width={m.width}
                 height={m.height}
-                loading={i < 3 ? "eager" : "lazy"}
+                loading={i === 0 ? "eager" : "lazy"}
                 decoding="async"
-                className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                className="h-full w-full object-cover"
               />
-              <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/85 to-transparent p-5 pt-16 text-left">
-                <span className="line-clamp-2 text-sm font-medium text-white/90">{m.alt}</span>
+              <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent p-6 pt-24 text-left">
+                <span className="line-clamp-1 text-xs font-medium text-white/80">{m.alt}</span>
               </span>
             </button>
           </SwiperSlide>
         ))}
       </Swiper>
 
-      <div className="mx-auto mt-8 flex max-w-[1320px] justify-end gap-3 px-5 sm:px-8">
+      <div className="absolute bottom-6 right-6 z-10 flex gap-3">
         <SliderArrow side="left" onClick={() => swiperRef.current?.slidePrev()} />
         <SliderArrow side="right" onClick={() => swiperRef.current?.slideNext()} />
       </div>

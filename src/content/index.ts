@@ -1,16 +1,14 @@
 import type { Category, ImageRef, Product } from "./types";
 import { ev } from "./categories/ev";
-import { ems } from "./categories/ems";
-import { robotics } from "./categories/robotics";
 
 /**
- * THE list of categories. Adding a fourth means:
+ * THE list of categories. Adding another means:
  *   1. src/assets/images/products/<slug>/  — drop the photos in
- *   2. src/content/categories/<slug>.ts    — copy an existing file, edit it
+ *   2. src/content/categories/<slug>.ts    — copy the ev file, edit it
  *   3. import + append here
  * Nothing else in the codebase needs to change.
  */
-const registry: Category[] = [ev, ems, robotics];
+const registry: Category[] = [ev];
 
 /** Categories in display order. */
 export const categories: Category[] = [...registry].sort((a, b) => a.order - b.order);

@@ -2,8 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   Zap,
-  Cpu,
-  CircuitBoard,
+  BatteryCharging,
+  Gauge,
   ArrowRight,
   Play,
   ShieldCheck,
@@ -11,16 +11,15 @@ import {
   Factory,
   Award,
   HeadphonesIcon,
-  Layers,
   Mail,
   Phone,
   MapPin,
 } from "lucide-react";
-import { allMedia, featuredMedia, getCategory } from "@/content";
+import { allMedia, getCategory } from "@/content";
 import { Img } from "@/components/media/img";
 import { GalleryStrip } from "@/components/media/gallery-strip";
+import { PlantSlider } from "@/components/media/plant-slider";
 import { Lightbox } from "@/components/media/lightbox";
-import { HeroVideo } from "@/components/media/hero-video";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { StatCounter } from "@/components/stat-counter";
@@ -34,12 +33,16 @@ const capabilities = [
     desc: "From concept to production under one roof.",
   },
   {
-    icon: Cpu,
-    title: "Automation-driven Quality",
-    desc: "Robotic cells for repeatable precision.",
+    icon: BatteryCharging,
+    title: "Battery & BMS Engineering",
+    desc: "In-house pack design, testing and battery management systems.",
   },
-  { icon: Layers, title: "End-to-end EMS", desc: "PCB, SMT, wave, jigs and fixtures." },
-  { icon: Wrench, title: "Custom Engineering", desc: "Bespoke systems tailored to your line." },
+  {
+    icon: Gauge,
+    title: "Range & Performance Testing",
+    desc: "Every platform validated on real Indian roads before it ships.",
+  },
+  { icon: Wrench, title: "Custom Fleet Builds", desc: "Cargo and passenger EVs tailored to your route." },
   {
     icon: HeadphonesIcon,
     title: "After-sales Support",
@@ -51,25 +54,84 @@ const capabilities = [
 const testimonials = [
   {
     quote:
-      "RANAYARA delivered our automation cell on schedule and the throughput exceeded targets. A partner we trust.",
-    name: "Rakesh Menon",
-    company: "Head of Ops, Vayu Motors",
-  },
-  {
-    quote:
-      "Their EMS team stood up an entire SMT line for us — clean process, tight tolerances, zero surprises.",
-    name: "Priya Iyer",
-    company: "Director, Meridian Electronics",
-  },
-  {
-    quote:
       "The BESTIVA fleet has been the most reliable EV we've deployed. Service response is outstanding.",
     name: "Anwar Sheikh",
     company: "Fleet Manager, CityMove",
   },
+  {
+    quote:
+      "RAFANDER's range held up exactly as promised across a full delivery shift — no surprises, no range anxiety.",
+    name: "Rakesh Menon",
+    company: "Head of Ops, Vayu Logistics",
+  },
+  {
+    quote:
+      "Our E-Cart Loaders cut fuel cost to zero on the yard run. Charging is simple and uptime has been excellent.",
+    name: "Priya Iyer",
+    company: "Plant Manager, Meridian Foods",
+  },
 ];
 
-const partners = ["MakeInIndia", "ARAI", "ISO 9001", "BIS", "ICAT", "SAE"];
+const partners = ["MakeInIndia", "ARAI", "ISO 9001", "BIS", "ICAT", "FAME II"];
+
+const heroBenefits = [
+  { icon: Zap, label: "Zero tailpipe emissions" },
+  { icon: ShieldCheck, label: "Low total cost of ownership" },
+  { icon: HeadphonesIcon, label: "Nationwide after-sales support" },
+];
+
+/** Pulls the "Range NNN km" figure out of a spec string, if present. */
+function parseRangeKm(specs: string[] | undefined): number | undefined {
+  for (const s of specs ?? []) {
+    const match = /range\s+(\d+)\s*km/i.exec(s);
+    if (match) return Number(match[1]);
+  }
+  return undefined;
+}
+
+/**
+ * Animated range bar — fills from 0 to the product's real range once it
+ * scrolls into view. Works inside the horizontally-pinned EV showcase too:
+ * IntersectionObserver checks the element's on-screen position after GSAP's
+ * transform, so it still fires as each panel scrolls into the frame.
+ */
+function RangeMeter({ km, max = 150 }: { km: number; max?: number }) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [filled, setFilled] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setFilled(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.4 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const pct = Math.min(100, Math.round((km / max) * 100));
+
+  return (
+    <div ref={ref} className="mt-8 max-w-xs">
+      <div className="mb-2 flex items-center justify-between text-xs uppercase tracking-widest text-white/50">
+        <span>Range on a single charge</span>
+        <span className="text-brand-accent">{km} km</span>
+      </div>
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+        <div
+          className="h-full rounded-full bg-brand-accent transition-[width] duration-[1400ms] ease-out"
+          style={{ width: filled ? `${pct}%` : "0%" }}
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function RanayarSite() {
   const evSectionRef = useRef<HTMLElement | null>(null);
@@ -78,15 +140,13 @@ export default function RanayarSite() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const evCategory = getCategory("ev");
-  const emsCategory = getCategory("ems");
-  const roboticsCategory = getCategory("robotics");
   const evItems = evCategory?.items ?? [];
-  const emsItems = emsCategory?.items ?? [];
 
   // A dozen photos is the teaser; the rest live on /gallery. Keep this even so
-  // the two marquee rows come out the same length.
-  const galleryTeaser = useMemo(() => featuredMedia(12), []);
-  const galleryCount = useMemo(() => allMedia().length, []);
+  // the two marquee rows come out the same length. Every individual photo, not
+  // one per product — with only a handful of products, featuredMedia() alone
+  // doesn't have enough distinct images to fill a marquee row.
+  const galleryTeaser = useMemo(() => allMedia().slice(0, 12), []);
   const teaserLightboxItems = useMemo(
     () => galleryTeaser.map((m) => ({ src: image(m.key), alt: m.alt })),
     [galleryTeaser],
@@ -156,28 +216,38 @@ export default function RanayarSite() {
         id="top"
         className="relative flex min-h-screen items-center overflow-hidden bg-ink text-white"
       >
-        <HeroVideo className="opacity-40" />
-        <div className="absolute inset-0 bg-gradient-to-br from-ink/90 via-ink/60 to-brand/70" />
+        {evItems[0]?.media[0] && (
+          <Img
+            media={evItems[0].media[0]}
+            priority
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
+        {/* Dark on the left where the copy sits, clear on the right so the vehicle reads plainly. */}
+        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/75 to-ink/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-transparent to-transparent" />
         <div className="relative z-10 mx-auto w-full max-w-[1320px] px-5 py-32 sm:px-8">
           <div className="max-w-3xl">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.2em] backdrop-blur">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand-accent" />
-              Engineering, made in-house
+            <div className="mb-6 inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.2em] backdrop-blur">
+              <span className="relative inline-flex h-3 w-6 items-center rounded-[3px] border border-white/40 p-[1.5px]">
+                <span className="ev-charge__fill h-full rounded-[1.5px] bg-brand-accent" />
+                <span className="absolute -right-[3px] h-1.5 w-1 rounded-r-sm bg-white/40" />
+              </span>
+              Electric mobility, made in India
             </div>
             <h1 className="font-display text-5xl font-bold leading-[1.05] sm:text-6xl md:text-7xl">
-              Engineering the future — <span className="text-brand-accent">electric mobility</span>,
-              automation & electronics.
+              Engineering the future — <span className="text-brand-accent">electric, always.</span>
             </h1>
             <p className="mt-6 max-w-xl text-lg text-white/70">
-              RANAYARA Engineering designs, prototypes and manufactures EVs, robotic automation
-              systems, and precision electronics under one roof.
+              RANAYARA Engineering designs, builds and services electric two-, three- and
+              cargo vehicles for Indian roads — battery to charge port, all in-house.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <button
                 onClick={() => scrollTo("ev")}
-                className="inline-flex items-center gap-2 rounded-full bg-brand-accent px-7 py-3.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-brand"
+                className="inline-flex items-center gap-2 rounded-full bg-brand-accent px-7 py-3.5 text-sm font-semibold text-ink shadow-[0_0_28px_-6px_var(--brand-accent)] transition-all hover:bg-white"
               >
-                Explore Products <ArrowRight className="h-4 w-4" />
+                Explore the Lineup <ArrowRight className="h-4 w-4" />
               </button>
               <button
                 onClick={() => scrollTo("contact")}
@@ -185,6 +255,14 @@ export default function RanayarSite() {
               >
                 Enquire Now
               </button>
+            </div>
+            <div className="mt-10 inline-flex flex-wrap divide-y divide-white/10 overflow-hidden rounded-2xl border border-white/15 bg-white/5 backdrop-blur sm:flex-nowrap sm:divide-x sm:divide-y-0">
+              {heroBenefits.map((b) => (
+                <div key={b.label} className="flex items-center gap-3 px-6 py-4">
+                  <b.icon className="h-5 w-5 shrink-0 text-brand-accent" />
+                  <span className="text-sm font-medium text-white/90">{b.label}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -211,12 +289,12 @@ export default function RanayarSite() {
               Who we are
             </div>
             <h2 className="font-display text-4xl font-bold leading-tight text-ink sm:text-5xl">
-              A vertically integrated engineering house.
+              A vertically integrated EV manufacturer.
             </h2>
             <p className="mt-6 text-lg leading-relaxed text-charcoal">
-              From electric mobility platforms to robotic production cells and precision
-              electronics, RANAYARA unites design, manufacturing and service into one accountable
-              partner. Every product is engineered, validated and built on our own floor.
+              From battery pack to charge port, RANAYARA designs, engineers and manufactures every
+              part of the electric vehicle experience under one roof — one accountable partner from
+              prototype to fleet.
             </p>
           </div>
           <div className="grid gap-4">
@@ -224,17 +302,17 @@ export default function RanayarSite() {
               {
                 icon: Zap,
                 title: "Electric Vehicles",
-                desc: "Scooters, bikes, cargo and passenger EV platforms.",
+                desc: "Bikes, cargo and passenger EV platforms built for Indian roads.",
               },
               {
-                icon: Cpu,
-                title: "Robotics & Automation",
-                desc: "Custom cells and production automation systems.",
+                icon: BatteryCharging,
+                title: "Battery & Powertrain",
+                desc: "In-house battery packs, BMS and motor engineering.",
               },
               {
-                icon: CircuitBoard,
-                title: "Electronics / EMS",
-                desc: "PCB, SMT, wave soldering, jigs and fixtures.",
+                icon: HeadphonesIcon,
+                title: "Sales & Service Network",
+                desc: "Nationwide after-sales support and genuine parts.",
               },
             ].map((p) => (
               <div
@@ -254,6 +332,27 @@ export default function RanayarSite() {
         </div>
       </section>
 
+      {/* FACILITY SLIDER */}
+      <section className="bg-secondary py-24 md:py-32">
+        <div className="mx-auto max-w-[1320px] px-5 sm:px-8">
+          <div className="reveal mb-12 max-w-2xl">
+            <div className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-brand-accent">
+              Our Facility
+            </div>
+            <h2 className="font-display text-4xl font-bold leading-tight text-ink sm:text-5xl">
+              Where every RANAYARA EV comes to life.
+            </h2>
+            <p className="mt-5 max-w-xl text-lg text-charcoal">
+              A look inside our manufacturing floor — engineering, assembly and testing, all
+              under one roof.
+            </p>
+          </div>
+          <div className="reveal">
+            <PlantSlider />
+          </div>
+        </div>
+      </section>
+
       {/* EV HORIZONTAL SHOWCASE */}
       <section id="ev" ref={evSectionRef} className="relative overflow-hidden bg-ink text-white">
         {/* Desktop: horizontal pinned track */}
@@ -266,7 +365,7 @@ export default function RanayarSite() {
                   Electric Vehicle Lineup
                 </div>
                 <h2 className="font-display text-5xl font-bold leading-[1.05] sm:text-6xl">
-                  Five platforms. One vertically integrated EV program.
+                  One vertically integrated EV program, three platforms.
                 </h2>
                 <p className="mt-6 text-lg text-white/70">
                   Scroll to explore the RANAYARA EV lineup — from personal mobility to fleet-grade
@@ -277,45 +376,50 @@ export default function RanayarSite() {
                 </div>
               </div>
             </div>
-            {evItems.map((p, i) => (
-              <div key={p.slug} className="flex h-screen w-screen shrink-0 items-center px-16">
-                <div className="grid w-full grid-cols-2 gap-16">
-                  <div className="relative flex items-center justify-center">
-                    <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-brand/30 to-brand-accent/10 blur-3xl" />
-                    {p.media[0] && (
-                      <Img
-                        media={p.media[0]}
-                        className="relative max-h-[70vh] w-full rounded-3xl object-cover shadow-2xl"
-                      />
-                    )}
-                  </div>
-                  <div className="flex flex-col justify-center">
-                    <div className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-accent">
-                      0{i + 1} · {p.tag}
+            {evItems.map((p, i) => {
+              const rangeKm = parseRangeKm(p.specs);
+              const otherSpecs = (p.specs ?? []).filter((s) => !/^range\s+\d+\s*km/i.test(s));
+              return (
+                <div key={p.slug} className="flex h-screen w-screen shrink-0 items-center px-16">
+                  <div className="grid w-full grid-cols-2 gap-16">
+                    <div className="speed-lines relative flex items-center justify-center rounded-3xl">
+                      <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-brand/30 to-brand-accent/10 blur-3xl" />
+                      {p.media[0] && (
+                        <Img
+                          media={p.media[0]}
+                          className="relative max-h-[70vh] w-full rounded-3xl object-cover shadow-2xl"
+                        />
+                      )}
                     </div>
-                    <h3 className="mt-4 font-display text-5xl font-bold leading-tight sm:text-6xl">
-                      {p.name}
-                    </h3>
-                    <ul className="mt-8 grid grid-cols-2 gap-4">
-                      {(p.specs ?? []).map((s) => (
-                        <li
-                          key={s}
-                          className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/80 backdrop-blur"
-                        >
-                          {s}
-                        </li>
-                      ))}
-                    </ul>
-                    <button
-                      onClick={() => scrollTo("contact")}
-                      className="mt-10 inline-flex w-fit items-center gap-2 rounded-full bg-brand-accent px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-white hover:text-brand"
-                    >
-                      Request specs <ArrowRight className="h-4 w-4" />
-                    </button>
+                    <div className="flex flex-col justify-center">
+                      <div className="text-xs font-semibold uppercase tracking-[0.25em] text-brand-accent">
+                        0{i + 1} · {p.tag}
+                      </div>
+                      <h3 className="mt-4 font-display text-5xl font-bold leading-tight sm:text-6xl">
+                        {p.name}
+                      </h3>
+                      <ul className="mt-8 grid grid-cols-2 gap-4">
+                        {otherSpecs.map((s) => (
+                          <li
+                            key={s}
+                            className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/80 backdrop-blur"
+                          >
+                            {s}
+                          </li>
+                        ))}
+                      </ul>
+                      {rangeKm !== undefined && <RangeMeter km={rangeKm} />}
+                      <button
+                        onClick={() => scrollTo("contact")}
+                        className="mt-10 inline-flex w-fit items-center gap-2 rounded-full bg-brand-accent px-6 py-3 text-sm font-semibold text-ink transition-all hover:bg-white"
+                      >
+                        Request specs <ArrowRight className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -326,7 +430,7 @@ export default function RanayarSite() {
               Electric Vehicle Lineup
             </div>
             <h2 className="font-display text-3xl font-bold leading-tight">
-              Five platforms. One EV program.
+              Three platforms. One EV program.
             </h2>
           </div>
           <div className="no-scrollbar mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-16">
@@ -352,35 +456,33 @@ export default function RanayarSite() {
         </div>
       </section>
 
-      {/* ROBOTICS */}
-      <section id="robotics" className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 md:py-32">
+      {/* OWNERSHIP / CHARGING */}
+      <section id="charging" className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 md:py-32">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-20">
-          <div className="reveal relative overflow-hidden rounded-3xl">
-            {roboticsCategory?.items[0]?.media[0] && (
-              <Img
-                media={roboticsCategory.items[0].media[0]}
-                className="h-full w-full object-cover"
-              />
+          <div className="speed-lines reveal relative overflow-hidden rounded-3xl">
+            {evItems[0]?.media[1] && (
+              <Img media={evItems[0].media[1]} className="h-full w-full object-cover" />
             )}
             <div className="absolute inset-0 bg-gradient-to-tr from-ink/40 via-transparent to-transparent" />
           </div>
           <div className="reveal">
             <div className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-brand-accent">
-              Robotics & Automation
+              Built for Real Ownership
             </div>
             <h2 className="font-display text-4xl font-bold leading-tight text-ink sm:text-5xl">
-              Robotic cells engineered for uptime.
+              Charging made simple, range you can trust.
             </h2>
             <p className="mt-6 text-lg text-charcoal">
-              We design custom robotic welding cells, pick-and-place stations and full production
-              automation lines — sized for your throughput and integrated with your existing plant.
+              Every RANAYARA EV ships with a removable Li-ion pack, a fast-charge cycle measured in
+              hours not overnight stays, and a battery management system engineered in-house for
+              longevity.
             </p>
             <ul className="mt-8 space-y-3">
               {[
-                "Custom robotic welding and material handling",
-                "Turn-key production automation lines",
-                "Vision-guided pick-and-place systems",
-                "PLC / SCADA integration and validation",
+                "Removable, swappable Li-ion battery packs",
+                "Fast-charge in under 4 hours from a standard socket",
+                "In-house BMS with cell-level protection",
+                "Real-world range validated on Indian roads",
               ].map((b) => (
                 <li key={b} className="flex items-start gap-3 text-charcoal">
                   <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
@@ -392,25 +494,29 @@ export default function RanayarSite() {
         </div>
       </section>
 
-      {/* EMS */}
-      <section id="ems" className="bg-secondary py-24 md:py-32">
+      {/* WHY ELECTRIC */}
+      <section id="why-electric" className="bg-secondary py-24 md:py-32">
         <div className="mx-auto max-w-[1320px] px-5 sm:px-8">
           <div className="reveal mb-14 max-w-2xl">
             <div className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-brand-accent">
-              Electronics & Digital (EMS)
+              Why Electric
             </div>
             <h2 className="font-display text-4xl font-bold leading-tight text-ink sm:text-5xl">
-              End-to-end electronics manufacturing.
+              Lower cost per kilometre, zero tailpipe emissions.
             </h2>
             <p className="mt-5 text-lg text-charcoal">
-              PCB assembly, SMT lines, wave soldering, jigs, fixtures and storage devices —
-              engineered for precision and traceable quality.
+              Every platform is engineered to cut running cost and emissions without cutting
+              payload, range or reliability.
             </p>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {emsItems.map((i, idx) => (
+            {[
+              { name: "Zero Tailpipe Emissions", desc: "Cleaner fleets and cleaner cities, ride after ride." },
+              { name: "Lower Cost per Kilometre", desc: "A fraction of fuel cost, with far fewer moving parts to service." },
+              { name: "FAME II & State Incentives", desc: "Eligible platforms priced to pass subsidy savings to you." },
+            ].map((i, idx) => (
               <div
-                key={i.slug}
+                key={i.name}
                 className="reveal group relative overflow-hidden rounded-2xl border border-black/5 bg-white p-7 shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg"
               >
                 <div className="mb-6 font-display text-6xl font-bold text-brand/10 transition-colors group-hover:text-brand/20">
@@ -439,13 +545,12 @@ export default function RanayarSite() {
                 Inside our floor.
               </h2>
               <p className="mt-5 max-w-xl text-lg text-charcoal">
-                {galleryCount} photographs of the vehicles, robotic cells and boards we build — shot
-                on our own shop floor.
+                Photographs of the EVs we build — shot on our own shop floor.
               </p>
             </div>
             <Link
               to="/gallery"
-              className="group inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-accent"
+              className="group inline-flex items-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-accent hover:text-ink"
             >
               View full gallery
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -460,7 +565,7 @@ export default function RanayarSite() {
             to="/gallery"
             className="inline-flex items-center gap-2 text-sm font-semibold text-brand transition-colors hover:text-brand-accent"
           >
-            See all {galleryCount} photographs <ArrowRight className="h-4 w-4" />
+            See all photographs <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>
@@ -581,7 +686,7 @@ export default function RanayarSite() {
                 </div>
                 <div>
                   <div className="text-xs uppercase tracking-widest text-white/50">Email</div>
-                  <div className="mt-1 text-sm">sales@ranayar.com</div>
+                  <div className="mt-1 text-sm">sales@ranayara.com</div>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -627,11 +732,13 @@ export default function RanayarSite() {
                 className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white outline-none focus:border-brand-accent"
               >
                 <option value="" className="bg-ink">
-                  Select a division
+                  Select an interest
                 </option>
-                <option className="bg-ink">Electric Vehicles</option>
-                <option className="bg-ink">Robotics & Automation</option>
-                <option className="bg-ink">Electronics / EMS</option>
+                <option className="bg-ink">Electric Bike</option>
+                <option className="bg-ink">Cargo EV</option>
+                <option className="bg-ink">Passenger E-Auto</option>
+                <option className="bg-ink">Fleet / Bulk Order</option>
+                <option className="bg-ink">Dealership Enquiry</option>
                 <option className="bg-ink">Request Brochure / Quote</option>
               </select>
             </div>
@@ -647,7 +754,7 @@ export default function RanayarSite() {
             </div>
             <button
               type="submit"
-              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-accent px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-white hover:text-brand"
+              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brand-accent px-6 py-3.5 text-sm font-semibold text-ink shadow-[0_0_28px_-6px_var(--brand-accent)] transition-all hover:bg-white"
             >
               Send enquiry <ArrowRight className="h-4 w-4" />
             </button>

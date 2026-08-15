@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
-import { ArrowRight, CircuitBoard } from "lucide-react";
+import { ArrowRight, Zap } from "lucide-react";
 import { getProduct, getRelatedProducts } from "@/content";
 import { CatalogCard } from "@/components/catalog/catalog-card";
 import { CatalogBreadcrumb } from "@/components/catalog/breadcrumb";
@@ -95,7 +95,7 @@ function ProductDetail() {
                 />
               ) : (
                 <div className="grid h-full w-full place-items-center">
-                  <CircuitBoard className="h-16 w-16 text-brand/30" />
+                  <Zap className="h-16 w-16 text-brand/30" />
                 </div>
               )}
             </div>

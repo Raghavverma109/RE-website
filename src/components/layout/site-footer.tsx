@@ -22,21 +22,16 @@ export function SiteFooter() {
                 <div className="text-[10px] uppercase tracking-[0.2em]">Engineering</div>
               </div>
             </div>
-            <p className="mt-5 text-sm">
-              Electric mobility, robotics and electronics — engineered in-house.
-            </p>
+            <p className="mt-5 text-sm">Electric mobility, engineered and built in-house.</p>
           </div>
-          <FooterCol
-            title="Products"
-            items={["RAFANDER Motiva", "RAFANDER", "E-Cart Loader", "E-Lion", "BESTIVA"]}
-          />
+          <FooterCol title="Models" items={["RAFANDER", "E-Cart Loader", "BESTIVA"]} />
           <FooterCol
             title="Company"
             items={["About", "Capabilities", "Gallery", "Careers", "Contact"]}
           />
           <FooterCol
-            title="Divisions"
-            items={["Electric Vehicles", "Robotics & Automation", "Electronics / EMS"]}
+            title="Ownership"
+            items={["Charging & Range", "Battery & BMS", "Service Network", "Fleet Enquiries"]}
           />
         </div>
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs sm:flex-row">
