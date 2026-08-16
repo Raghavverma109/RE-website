@@ -22,7 +22,7 @@ export const Route = createFileRoute("/catalog/$category/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: `https://ranayar.com/catalog/${loaderData?.category.slug}` }],
+    links: [{ rel: "canonical", href: `https://ranayara.com/catalog/${loaderData?.category.slug}` }],
   }),
   component: CategoryListing,
 });

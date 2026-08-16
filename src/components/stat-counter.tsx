@@ -70,7 +70,7 @@ export function StatCounter({
 
   return (
     <div ref={ref} className={className ?? "text-center"}>
-      <div className={`font-display text-4xl font-bold sm:text-5xl ${valueClassName}`}>
+      <div className={`font-display text-2xl font-bold sm:text-4xl md:text-5xl ${valueClassName}`}>
         {value}
         {suffix}
       </div>

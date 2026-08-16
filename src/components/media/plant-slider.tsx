@@ -22,7 +22,7 @@ export function PlantSlider() {
   if (photos.length === 0) return null;
 
   return (
-    <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+    <div className="relative w-full">
       <Swiper
         modules={[Autoplay, EffectFade, Keyboard]}
         onSwiper={(s) => (swiperRef.current = s)}
@@ -31,7 +31,7 @@ export function PlantSlider() {
         loop
         keyboard={{ enabled: true }}
         autoplay={{ delay: 4200, disableOnInteraction: false, pauseOnMouseEnter: true }}
-        className="aspect-[16/10] w-full sm:aspect-[21/9]"
+        className="aspect-[4/3] w-full sm:aspect-[16/9] lg:aspect-[21/9]"
       >
         {photos.map((key, i) => (
           <SwiperSlide key={key}>
@@ -45,8 +45,8 @@ export function PlantSlider() {
           </SwiperSlide>
         ))}
       </Swiper>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-ink/60 to-transparent" />
-      <div className="absolute bottom-5 right-5 flex gap-3">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-ink/60 to-transparent" />
+      <div className="absolute bottom-6 right-5 flex gap-3 sm:right-8">
         <SliderArrow side="left" onClick={() => swiperRef.current?.slidePrev()} />
         <SliderArrow side="right" onClick={() => swiperRef.current?.slideNext()} />
       </div>

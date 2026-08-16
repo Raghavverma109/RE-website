@@ -7,14 +7,16 @@ import type { Swiper as SwiperClass } from "swiper/types";
 import "swiper/css";
 import "swiper/css/effect-fade";
 
-import { allMedia, featuredMedia, mediaByCategory } from "@/content";
+import { allMedia, mediaByCategory } from "@/content";
 import type { ImageRef } from "@/content/types";
 import { GalleryMasonry } from "@/components/media/gallery-masonry";
 import { Lightbox, type LightboxItem } from "@/components/media/lightbox";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
-import { image } from "@/lib/media";
+import { hasImage, image } from "@/lib/media";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
+
+const GALLERY_HERO_IMAGE_KEY = "site/galleryHero.webp";
 
 export const Route = createFileRoute("/gallery")({
   head: () => ({
@@ -81,6 +83,10 @@ function GalleryPage() {
         </div>
         <FeaturedSlider media={everything} onSelect={(i) => openViewer(everything, i)} />
       </section>
+
+      {/* Marks where the dark hero+slider zone ends, so the header knows how
+          long to stay transparent — see SiteHeader's `header-transparent-until`. */}
+      <div id="header-transparent-until" aria-hidden />
 
       {/* FULL GRID */}
       <section id="all" className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 md:py-32">
@@ -197,7 +203,7 @@ function ScrollProgress() {
 /** Dark opening panel with a slow parallax drift on the backdrop. */
 function GalleryHero({ count }: { count: number }) {
   const backdropRef = useRef<HTMLDivElement | null>(null);
-  const backdrop = featuredMedia(1)[0];
+  const heroHasImage = hasImage(GALLERY_HERO_IMAGE_KEY);
 
   useEffect(() => {
     let cancelled = false;
@@ -244,15 +250,17 @@ function GalleryHero({ count }: { count: number }) {
   return (
     <section className="relative flex min-h-[68vh] items-end overflow-hidden bg-ink text-white">
       <div ref={backdropRef} className="absolute inset-0 -top-[10%] h-[120%]">
-        {backdrop && (
+        {heroHasImage ? (
           <img
-            src={image(backdrop.key)}
+            src={image(GALLERY_HERO_IMAGE_KEY)}
             alt=""
-            width={backdrop.width}
-            height={backdrop.height}
+            width={1537}
+            height={1023}
             fetchPriority="high"
-            className="h-full w-full object-cover opacity-40"
+            className="h-full w-full object-cover opacity-65"
           />
+        ) : (
+          <div className="h-full w-full bg-gradient-to-br from-ink via-ink to-brand/40" />
         )}
       </div>
       <div className="absolute inset-0 bg-gradient-to-br from-ink/90 via-ink/70 to-brand/60" />
@@ -303,7 +311,11 @@ function FeaturedSlider({
       >
         {media.map((m, i) => (
           <SwiperSlide key={m.key}>
-            <button type="button" onClick={() => onSelect(i)} className="group relative block h-screen w-full">
+            <button
+              type="button"
+              onClick={() => onSelect(i)}
+              className="group relative block h-[56vh] min-h-[320px] w-full sm:h-[70vh] md:h-screen"
+            >
               <img
                 src={image(m.key)}
                 alt={m.alt}
@@ -311,7 +323,7 @@ function FeaturedSlider({
                 height={m.height}
                 loading={i === 0 ? "eager" : "lazy"}
                 decoding="async"
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover object-center"
               />
               <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent p-6 pt-24 text-left">
                 <span className="line-clamp-1 text-xs font-medium text-white/80">{m.alt}</span>

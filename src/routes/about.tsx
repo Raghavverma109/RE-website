@@ -55,7 +55,7 @@ const location = {
   street: "561 Block M8, 3, Sector 8",
   area: "IMT Manesar, Gurugram",
   region: "Haryana 122503, India",
-  email: "sales@ranayar.com",
+  email: ["info@ranayara.com", "sales@ranayara.com"],
   phone: "+91 00000 00000",
 };
 
@@ -147,7 +147,7 @@ export const Route = createFileRoute("/about")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://ranayar.com/about" }],
+    links: [{ rel: "canonical", href: "https://ranayara.com/about" }],
   }),
   component: AboutPage,
 });
@@ -187,7 +187,7 @@ function AboutPage() {
               designed and built in-house.
             </p>
           </div>
-          <div className="mt-16 grid grid-cols-2 gap-8 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm sm:p-8 md:grid-cols-4">
+          <div className="mt-16 grid grid-cols-2 gap-x-4 gap-y-8 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm sm:gap-8 sm:p-8 md:grid-cols-4">
             {stats.map((s) => (
               <StatCounter
                 key={s.label}
@@ -278,13 +278,13 @@ function AboutPage() {
           <h2 className="reveal mb-8 text-center text-xs font-semibold uppercase tracking-[0.25em] text-charcoal">
             Certifications & Standards
           </h2>
-          <div className="reveal grid grid-cols-2 items-center justify-items-center gap-8 sm:grid-cols-4">
+          <div className="reveal grid grid-cols-2 items-center justify-items-center gap-x-4 gap-y-6 sm:grid-cols-4 sm:gap-8">
             {certifications.map((c) => (
               <div
                 key={c}
-                className="flex items-center gap-2 font-display text-base font-bold uppercase tracking-widest text-charcoal/50 transition-colors hover:text-brand"
+                className="flex items-center gap-2 text-center font-display text-sm font-bold uppercase tracking-widest text-charcoal/50 transition-colors hover:text-brand sm:text-base"
               >
-                <Award className="h-5 w-5" />
+                <Award className="h-5 w-5 shrink-0" />
                 {c}
               </div>
             ))}

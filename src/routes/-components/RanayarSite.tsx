@@ -23,7 +23,7 @@ import { Lightbox } from "@/components/media/lightbox";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { StatCounter } from "@/components/stat-counter";
-import { image } from "@/lib/media";
+import { hasImage, image } from "@/lib/media";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 
 const capabilities = [
@@ -73,6 +73,8 @@ const testimonials = [
 ];
 
 const partners = ["MakeInIndia", "ARAI", "ISO 9001", "BIS", "ICAT", "FAME II"];
+
+const CHARGING_IMAGE_KEY = "site/charging.webp";
 
 const heroBenefits = [
   { icon: Zap, label: "Zero tailpipe emissions" },
@@ -273,7 +275,7 @@ export default function RanayarSite() {
 
       {/* STATS MARQUEE */}
       <section className="border-y border-black/5 bg-secondary">
-        <div className="mx-auto grid max-w-[1320px] grid-cols-2 gap-8 px-5 py-14 sm:px-8 md:grid-cols-4">
+        <div className="mx-auto grid max-w-[1320px] grid-cols-2 gap-x-4 gap-y-8 px-5 py-14 sm:gap-8 sm:px-8 md:grid-cols-4">
           <StatCounter target={12} suffix="+" label="Years in operation" />
           <StatCounter target={25} suffix="K+" label="Units delivered" />
           <StatCounter target={150} suffix="+" label="Engineers on staff" />
@@ -333,7 +335,7 @@ export default function RanayarSite() {
       </section>
 
       {/* FACILITY SLIDER */}
-      <section className="bg-secondary py-24 md:py-32">
+      <section className="overflow-hidden bg-secondary py-24 md:py-32">
         <div className="mx-auto max-w-[1320px] px-5 sm:px-8">
           <div className="reveal mb-12 max-w-2xl">
             <div className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-brand-accent">
@@ -347,9 +349,12 @@ export default function RanayarSite() {
               under one roof.
             </p>
           </div>
-          <div className="reveal">
-            <PlantSlider />
-          </div>
+        </div>
+        {/* Full-bleed, edge to edge — the same treatment as the site's other big
+            photo moments (hero, EV showcase, gallery slider), so this doesn't
+            read as a boxed-in card floating on the page. */}
+        <div className="reveal relative left-1/2 w-screen -translate-x-1/2">
+          <PlantSlider />
         </div>
       </section>
 
@@ -460,8 +465,20 @@ export default function RanayarSite() {
       <section id="charging" className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 md:py-32">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-20">
           <div className="speed-lines reveal relative overflow-hidden rounded-3xl">
-            {evItems[0]?.media[1] && (
-              <Img media={evItems[0].media[1]} className="h-full w-full object-cover" />
+            {hasImage(CHARGING_IMAGE_KEY) ? (
+              <img
+                src={image(CHARGING_IMAGE_KEY)}
+                alt="RANAYARA EV charging at the facility"
+                width={6000}
+                height={4000}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              evItems[0]?.media[2] && (
+                <Img media={evItems[0].media[2]} className="h-full w-full object-cover" />
+              )
             )}
             <div className="absolute inset-0 bg-gradient-to-tr from-ink/40 via-transparent to-transparent" />
           </div>
@@ -611,7 +628,7 @@ export default function RanayarSite() {
           <div className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-brand-accent">
             Client trust
           </div>
-          <div className="relative min-h-[220px]">
+          <div className="relative min-h-[320px] sm:min-h-[260px] md:min-h-[220px]">
             {testimonials.map((t, i) => (
               <div
                 key={i}
@@ -621,7 +638,7 @@ export default function RanayarSite() {
                   pointerEvents: i === testimonialIdx ? "auto" : "none",
                 }}
               >
-                <p className="font-display text-2xl font-medium leading-relaxed text-ink sm:text-3xl">
+                <p className="font-display text-xl font-medium leading-relaxed text-ink sm:text-2xl md:text-3xl">
                   “{t.quote}”
                 </p>
                 <div className="mt-8">
