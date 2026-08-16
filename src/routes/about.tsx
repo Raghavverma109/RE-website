@@ -19,6 +19,7 @@ import { CompanyCard } from "@/components/about/company-card";
 import { ValueCard } from "@/components/about/value-card";
 import { Timeline } from "@/components/about/timeline";
 import { hasImage, image } from "@/lib/media";
+import { ADDRESS, CERTIFICATIONS, CONTACT, DIRECTIONS_URL, SITE, canonicalUrl } from "@/lib/site";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 
 const HERO_IMAGE_KEY = "products/ev/bestiva.webp";
@@ -49,20 +50,6 @@ const MAP_FADE = [
  * browsers, so this can never introduce a horizontal scrollbar.
  */
 const MAP_BLEED_RIGHT = "lg:mr-[calc(-2rem_-_max(0px,(100vw_-_1320px)_/_2))]";
-
-const location = {
-  company: "Ranayara Engineering Industries Pvt. Ltd.",
-  street: "561 Block M8, 3, Sector 8",
-  area: "IMT Manesar, Gurugram",
-  region: "Haryana 122503, India",
-  email: ["info@ranayara.com", "sales@ranayara.com"],
-  phone: "+91 00000 00000",
-};
-
-/** Google Maps deep link — opens directions to the Manesar facility. */
-const DIRECTIONS_URL = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-  `${location.company}, ${location.street}, ${location.area}, ${location.region}`,
-)}`;
 
 const stats = [
   { target: 5, suffix: "+", label: "Years of Experience" },
@@ -128,8 +115,6 @@ const journey = [
   },
 ];
 
-const certifications = ["ISO 9001:2015", "ISO 14001:2015", "IATF 16949", "OHSAS 18001"];
-
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
@@ -147,7 +132,7 @@ export const Route = createFileRoute("/about")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://ranayara.com/about" }],
+    links: [{ rel: "canonical", href: canonicalUrl("/about") }],
   }),
   component: AboutPage,
 });
@@ -279,7 +264,7 @@ function AboutPage() {
             Certifications & Standards
           </h2>
           <div className="reveal grid grid-cols-2 items-center justify-items-center gap-x-4 gap-y-6 sm:grid-cols-4 sm:gap-8">
-            {certifications.map((c) => (
+            {CERTIFICATIONS.map((c) => (
               <div
                 key={c}
                 className="flex items-center gap-2 text-center font-display text-sm font-bold uppercase tracking-widest text-charcoal/50 transition-colors hover:text-brand sm:text-base"
@@ -312,29 +297,34 @@ function AboutPage() {
             <dl className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-1 lg:gap-5">
               <LocationRow icon={MapPin} label="Address">
                 <address className="not-italic leading-relaxed">
-                  {location.company}
+                  {SITE.legalName}
                   <br />
-                  {location.street}
+                  {ADDRESS.street}
                   <br />
-                  {location.area}
+                  {ADDRESS.area}
                   <br />
-                  {location.region}
+                  {ADDRESS.region}
                 </address>
               </LocationRow>
               <LocationRow icon={Building2} label="Facility">
                 Office &amp; manufacturing plant
               </LocationRow>
               <LocationRow icon={Mail} label="Email">
-                <a href={`mailto:${location.email}`} className="transition-colors hover:text-brand">
-                  {location.email}
-                </a>
+                {CONTACT.emails.map((email, i) => (
+                  <span key={email}>
+                    {i > 0 && ", "}
+                    <a href={`mailto:${email}`} className="transition-colors hover:text-brand">
+                      {email}
+                    </a>
+                  </span>
+                ))}
               </LocationRow>
               <LocationRow icon={Phone} label="Phone">
                 <a
-                  href={`tel:${location.phone.replace(/\s/g, "")}`}
+                  href={`tel:${CONTACT.phone.replace(/\s/g, "")}`}
                   className="transition-colors hover:text-brand"
                 >
-                  {location.phone}
+                  {CONTACT.phone}
                 </a>
               </LocationRow>
             </dl>
@@ -372,7 +362,7 @@ function AboutPage() {
             {mapHasImage ? (
               <img
                 src={image(LOCATION_MAP_KEY)}
-                alt="Map showing the Ranayara Engineering facility at IMT Manesar, Gurugram, Haryana"
+                alt={`Map showing the ${SITE.name} facility at ${ADDRESS.area}`}
                 width={2048}
                 height={2048}
                 loading="lazy"

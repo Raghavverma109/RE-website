@@ -24,6 +24,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { StatCounter } from "@/components/stat-counter";
 import { hasImage, image } from "@/lib/media";
+import { CONTACT, PARTNERS, SITE } from "@/lib/site";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 
 const capabilities = [
@@ -71,8 +72,6 @@ const testimonials = [
     company: "Plant Manager, Meridian Foods",
   },
 ];
-
-const partners = ["MakeInIndia", "ARAI", "ISO 9001", "BIS", "ICAT", "FAME II"];
 
 const CHARGING_IMAGE_KEY = "site/charging.webp";
 
@@ -670,7 +669,7 @@ export default function RanayarSite() {
             Certifications & Partners
           </div>
           <div className="grid grid-cols-2 items-center justify-items-center gap-8 sm:grid-cols-3 md:grid-cols-6">
-            {partners.map((p) => (
+            {PARTNERS.map((p) => (
               <div
                 key={p}
                 className="font-display text-lg font-bold uppercase tracking-widest text-charcoal/40 transition-colors hover:text-brand"
@@ -703,7 +702,7 @@ export default function RanayarSite() {
                 </div>
                 <div>
                   <div className="text-xs uppercase tracking-widest text-white/50">Email</div>
-                  <div className="mt-1 text-sm">sales@ranayara.com</div>
+                  <div className="mt-1 text-sm">{CONTACT.primaryEmail}</div>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -712,7 +711,7 @@ export default function RanayarSite() {
                 </div>
                 <div>
                   <div className="text-xs uppercase tracking-widest text-white/50">Phone</div>
-                  <div className="mt-1 text-sm">+91 00000 00000</div>
+                  <div className="mt-1 text-sm">{CONTACT.phone}</div>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -721,7 +720,7 @@ export default function RanayarSite() {
                 </div>
                 <div>
                   <div className="text-xs uppercase tracking-widest text-white/50">Facility</div>
-                  <div className="mt-1 text-sm">RANAYARA Engineering Works, India</div>
+                  <div className="mt-1 text-sm">{SITE.name} Works, India</div>
                 </div>
               </div>
             </div>

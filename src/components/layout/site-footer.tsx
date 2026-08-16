@@ -1,4 +1,5 @@
 import { image } from "@/lib/media";
+import { SITE } from "@/lib/site";
 
 /** Site-wide footer — used on the homepage and every catalog page. */
 export function SiteFooter() {
@@ -12,17 +13,17 @@ export function SiteFooter() {
             <div className="flex items-center gap-3">
               <img
                 src={logoSrc}
-                alt="RANAYARA"
+                alt={SITE.brand}
                 width={40}
                 height={40}
                 className="h-10 w-10 object-contain"
               />
               <div>
-                <div className="font-display text-base font-bold text-white">RANAYARA</div>
+                <div className="font-display text-base font-bold text-white">{SITE.brand}</div>
                 <div className="text-[10px] uppercase tracking-[0.2em]">Engineering</div>
               </div>
             </div>
-            <p className="mt-5 text-sm">Electric mobility, engineered and built in-house.</p>
+            <p className="mt-5 text-sm">{SITE.tagline}</p>
           </div>
           <FooterCol title="Models" items={["RAFANDER", "E-Cart Loader", "BESTIVA"]} />
           <FooterCol
@@ -35,7 +36,7 @@ export function SiteFooter() {
           />
         </div>
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-xs sm:flex-row">
-          <div>© {new Date().getFullYear()} RANAYARA Engineering. All rights reserved.</div>
+          <div>© {new Date().getFullYear()} {SITE.name}. All rights reserved.</div>
           <div>Made with precision in India.</div>
         </div>
       </div>

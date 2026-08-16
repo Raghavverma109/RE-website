@@ -14,6 +14,7 @@ import { Lightbox, type LightboxItem } from "@/components/media/lightbox";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { hasImage, image } from "@/lib/media";
+import { canonicalUrl, SITE } from "@/lib/site";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 
 const GALLERY_HERO_IMAGE_KEY = "site/galleryHero.webp";
@@ -21,12 +22,12 @@ const GALLERY_HERO_IMAGE_KEY = "site/galleryHero.webp";
 export const Route = createFileRoute("/gallery")({
   head: () => ({
     meta: [
-      { title: "Gallery — RANAYARA Engineering" },
+      { title: `Gallery — ${SITE.name}` },
       {
         name: "description",
         content: "Inside the RANAYARA floor: our electric vehicle lineup, in photographs.",
       },
-      { property: "og:title", content: "Gallery — RANAYARA Engineering" },
+      { property: "og:title", content: `Gallery — ${SITE.name}` },
       {
         property: "og:description",
         content: "Photographs from the RANAYARA electric vehicle design and manufacturing floor.",
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/gallery")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "https://ranayara.com/gallery" }],
+    links: [{ rel: "canonical", href: canonicalUrl("/gallery") }],
   }),
   component: GalleryPage,
 });

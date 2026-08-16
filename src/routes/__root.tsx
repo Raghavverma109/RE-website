@@ -10,6 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { SITE } from "@/lib/site";
 
 function NotFoundComponent() {
   return (
@@ -72,11 +73,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "RANAYARA Engineering — Electric Vehicle Manufacturer" },
-      { name: "description", content: "RANAYARA Engineering designs and manufactures electric two-, three- and cargo vehicles for Indian roads, with in-house battery, motor and BMS engineering." },
-      { name: "author", content: "RANAYARA Engineering" },
-      { property: "og:title", content: "RANAYARA Engineering" },
-      { property: "og:description", content: "Electric mobility, engineered and built in-house." },
+      { title: `${SITE.name} — Electric Vehicle Manufacturer` },
+      { name: "description", content: `${SITE.name} designs and manufactures electric two-, three- and cargo vehicles for Indian roads, with in-house battery, motor and BMS engineering.` },
+      { name: "author", content: SITE.name },
+      { property: "og:title", content: SITE.name },
+      { property: "og:description", content: SITE.tagline },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

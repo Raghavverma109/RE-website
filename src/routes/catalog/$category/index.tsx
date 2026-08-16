@@ -5,6 +5,7 @@ import { CategoryPills } from "@/components/catalog/category-pills";
 import { CatalogBreadcrumb } from "@/components/catalog/breadcrumb";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { canonicalUrl } from "@/lib/site";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 
 export const Route = createFileRoute("/catalog/$category/")({
@@ -22,7 +23,7 @@ export const Route = createFileRoute("/catalog/$category/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: `https://ranayara.com/catalog/${loaderData?.category.slug}` }],
+    links: [{ rel: "canonical", href: canonicalUrl(`/catalog/${loaderData?.category.slug}`) }],
   }),
   component: CategoryListing,
 });

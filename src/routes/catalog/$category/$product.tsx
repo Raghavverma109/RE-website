@@ -8,6 +8,7 @@ import { Img } from "@/components/media/img";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { image } from "@/lib/media";
+import { canonicalUrl, SITE } from "@/lib/site";
 import { useSmoothScroll } from "@/hooks/use-smooth-scroll";
 
 export const Route = createFileRoute("/catalog/$category/$product")({
@@ -26,8 +27,8 @@ export const Route = createFileRoute("/catalog/$category/$product")({
     const description =
       product.desc ??
       product.specs?.join(", ") ??
-      `${product.name} — ${category.name} by RANAYARA Engineering.`;
-    const canonicalUrl = `https://ranayar.com/catalog/${category.slug}/${product.slug}`;
+      `${product.name} — ${category.name} by ${SITE.name}.`;
+    const productUrl = canonicalUrl(`/catalog/${category.slug}/${product.slug}`);
     const primaryImage = product.media[0] ? image(product.media[0].key) : undefined;
 
     return {
@@ -40,7 +41,7 @@ export const Route = createFileRoute("/catalog/$category/$product")({
         ...(primaryImage ? [{ property: "og:image", content: primaryImage }] : []),
         { name: "twitter:card", content: "summary_large_image" },
       ],
-      links: [{ rel: "canonical", href: canonicalUrl }],
+      links: [{ rel: "canonical", href: productUrl }],
       scripts: [
         {
           type: "application/ld+json",

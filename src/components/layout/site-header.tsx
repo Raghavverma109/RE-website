@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { image } from "@/lib/media";
+import { SITE } from "@/lib/site";
 
 const navLinks: { id: string; label: string; to?: "/catalog" | "/about" | "/gallery" }[] = [
   { id: "about", label: "About", to: "/about" },
@@ -18,7 +19,7 @@ function LogoMark({ logoSrc, scrolled }: { logoSrc: string; scrolled: boolean })
     <>
       <img
         src={logoSrc}
-        alt="RANAYARA Engineering"
+        alt={SITE.name}
         width={56}
         height={56}
         className="h-14 w-14 object-contain"
@@ -27,7 +28,7 @@ function LogoMark({ logoSrc, scrolled }: { logoSrc: string; scrolled: boolean })
         <div
           className={`font-display text-xl font-bold leading-none ${scrolled ? "text-ink" : "text-white"}`}
         >
-          RANAYARA
+          {SITE.brand}
         </div>
         <div
           className={`text-xs font-medium uppercase tracking-[0.2em] ${scrolled ? "text-charcoal" : "text-white/70"}`}
